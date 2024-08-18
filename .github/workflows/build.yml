@@ -1,8 +1,11 @@
 # Inspired by tuile-crossterm
 
-name: Make prebuilt binaries
+name: Build
 
-on: workflow_dispatch
+on:   
+  push:
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 permissions:
   contents: write
