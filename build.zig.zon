@@ -1,0 +1,15 @@
+.{
+    .name = "zig-ratatui",
+    .version = "0.1.0",
+    .dependencies = .{
+        .@"build.crab" = .{
+            .url = "https://github.com/akarpovskii/build.crab/archive/refs/tags/v0.1.5.tar.gz",
+            .hash = "1220c7d071bdde500955b0d5b807cb1a66687b915a020c3e87496623243912c77bed",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}

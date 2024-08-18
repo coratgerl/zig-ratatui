@@ -1,0 +1,47 @@
+name: Make prebuilt binaries
+
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        target: [x86_64-pc-windows-gnu, i686-pc-windows-gnu, x86_64-apple-darwin, aarch64-apple-darwin, x86_64-unknown-linux-gnu, i686-unknown-linux-gnu, aarch64-unknown-linux-gnu]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Rust version
+        run: rustc --version
+
+      - name: Build library
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - uses: goto-bus-stop/setup-zig@2a9625d550eefc3a9b1a43d342ad655f563f8241
+        if: contains(matrix.target, 'windows')
+        with:
+          version: 0.12.0
+      
+      - name: Strip ___chkstk_ms on Windows
+        if: contains(matrix.target, 'windows')
+        run: |
+          mv target/${{ matrix.target }}/release/libtuile_crossterm.a target/${{ matrix.target }}/release/libtuile_crossterm.a.bk
+          zig build strip --release=fast -- --format coff --archive target/${{ matrix.target }}/release/libtuile_crossterm.a.bk --temp-dir ${{ runner.temp }} --remove-symbol ___chkstk_ms --output target/${{ matrix.target }}/release/libtuile_crossterm.a
+
+      - name: Create tar.gz
+        run: tar -czf  libtuile_crossterm-${{ matrix.target }}.tar.gz tuile-crossterm.h -C target/${{ matrix.target }}/release libtuile_crossterm.a
+
+      - name: Attach to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: libtuile_crossterm-${{ matrix.target }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
