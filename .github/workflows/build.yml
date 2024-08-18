@@ -33,15 +33,15 @@ jobs:
       - name: Strip ___chkstk_ms on Windows
         if: contains(matrix.target, 'windows')
         run: |
-          mv target/${{ matrix.target }}/release/libtuile_crossterm.a target/${{ matrix.target }}/release/libtuile_crossterm.a.bk
-          zig build strip --release=fast -- --format coff --archive target/${{ matrix.target }}/release/libtuile_crossterm.a.bk --temp-dir ${{ runner.temp }} --remove-symbol ___chkstk_ms --output target/${{ matrix.target }}/release/libtuile_crossterm.a
+          mv target/${{ matrix.target }}/release/libzig_ratatui.a target/${{ matrix.target }}/release/libzig_ratatui.a.bk
+          zig build strip --release=fast -- --format coff --archive target/${{ matrix.target }}/release/libzig_ratatui.a.bk --temp-dir ${{ runner.temp }} --remove-symbol ___chkstk_ms --output target/${{ matrix.target }}/release/libzig_ratatui.a
 
       - name: Create tar.gz
-        run: tar -czf  libtuile_crossterm-${{ matrix.target }}.tar.gz tuile-crossterm.h -C target/${{ matrix.target }}/release libtuile_crossterm.a
+        run: tar -czf  libzig_ratatui-${{ matrix.target }}.tar.gz zig-ratatui.h -C target/${{ matrix.target }}/release libzig_ratatui.a
 
       - name: Attach to release
         uses: softprops/action-gh-release@v1
         with:
-          files: libtuile_crossterm-${{ matrix.target }}.tar.gz
+          files: libzig_ratatui-${{ matrix.target }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
