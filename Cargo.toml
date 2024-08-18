@@ -3,6 +3,16 @@ name = "zig-ratatui"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[profile.release]
+opt-level = "z"
+strip = true
+lto = true
+
+[lib]
+crate-type = ["staticlib"]
 
 [dependencies]
+ratatui = "=0.23.0"
+
+[build-dependencies]
+cbindgen = "0.24.0"
