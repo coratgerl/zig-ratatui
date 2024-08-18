@@ -1,3 +1,5 @@
+# Inspired by tuile-crossterm
+
 name: Make prebuilt binaries
 
 on: workflow_dispatch
